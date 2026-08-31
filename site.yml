@@ -33,14 +33,6 @@
         group: awx-demo
         mode: '0755'
 
-    - name: Deploy application configuration
-      ansible.builtin.template:
-        src: templates/app.conf.j2
-        dest: /opt/awx-demo/config/app.conf
-        owner: awx-demo
-        group: awx-demo
-        mode: '0644'
-
     - name: Enable nginx
       ansible.builtin.systemd:
         name: nginx
@@ -68,3 +60,12 @@
           - "OS: {{ ansible_distribution }} {{ ansible_distribution_version }}"
           - "Nginx: {{ nginx_status.stdout }}"
           - "Configuration: /opt/awx-demo/config/app.conf"
+
+
+    - name: Deploy application configuration
+      ansible.builtin.template:
+        src: templates/app.conf.j2
+        dest: /opt/awx-demo/config/app.conf
+        owner: awx-demo
+        group: awx-demo
+        mode: '0644'
