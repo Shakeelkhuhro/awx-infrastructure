@@ -47,6 +47,14 @@
         enabled: true
         state: started
 
+    - name: Deploy custom website
+      ansible.builtin.copy:
+        src: files/index.html
+        dest: /usr/share/nginx/html/index.html
+        owner: root
+        group: root
+        mode: '0644'
+
     - name: Verify nginx
       ansible.builtin.command:
         cmd: systemctl is-active nginx
