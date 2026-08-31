@@ -1,8 +1,14 @@
+```yaml
 ---
-- name: Configure Rocky Linux Web Server
+- name: Deploy AWX Infrastructure Demo Website
   hosts: rocky
   become: true
   gather_facts: true
+
+  vars:
+    app_root: /opt/awx-demo
+    web_root: /opt/awx-demo/web
+    app_user: awxdemo
 
   tasks:
 
@@ -13,59 +19,251 @@
 
     - name: Create application user
       ansible.builtin.user:
-        name: awx-demo
-        state: present
-        create_home: true
+        name: "{{ app_user }}"
+        system: true
+        create_home: false
 
-    - name: Create application directory
+    - name: Create website directory
       ansible.builtin.file:
-        path: /opt/awx-demo
+        path: "{{ web_root }}"
         state: directory
-        owner: awx-demo
-        group: awx-demo
-        mode: '0755'
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0755"
 
-    - name: Create configuration directory
+    - name: Deploy custom AWX demo website
+      ansible.builtin.copy:
+        dest: "{{ web_root }}/index.html"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0644"
+        content: |
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>AWX Infrastructure Demo</title>
+            <style>
+              * {
+                box-sizing: border-box;
+              }
+
+              body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background: #0f172a;
+                color: #e2e8f0;
+              }
+
+              .container {
+                max-width: 1000px;
+                margin: auto;
+                padding: 60px 25px;
+              }
+
+              .hero {
+                text-align: center;
+                margin-bottom: 50px;
+              }
+
+              .badge {
+                display: inline-block;
+                padding: 8px 16px;
+                border-radius: 20px;
+                background: #1e293b;
+                color: #38bdf8;
+                font-weight: bold;
+                margin-bottom: 20px;
+              }
+
+              h1 {
+                font-size: 48px;
+                margin: 10px 0;
+              }
+
+              .subtitle {
+                color: #94a3b8;
+                font-size: 20px;
+              }
+
+              .pipeline {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 15px;
+                flex-wrap: wrap;
+                margin: 40px 0;
+              }
+
+              .step {
+                background: #1e293b;
+                border: 1px solid #334155;
+                border-radius: 12px;
+                padding: 18px 25px;
+                min-width: 130px;
+                text-align: center;
+              }
+
+              .arrow {
+                color: #38bdf8;
+                font-size: 25px;
+              }
+
+              .cards {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 20px;
+              }
+
+              .card {
+                background: #1e293b;
+                padding: 25px;
+                border-radius: 15px;
+                border: 1px solid #334155;
+              }
+
+              .card h3 {
+                color: #38bdf8;
+                margin-top: 0;
+              }
+
+              .status {
+                color: #22c55e;
+                font-weight: bold;
+              }
+
+              footer {
+                text-align: center;
+                margin-top: 50px;
+                color: #64748b;
+              }
+            </style>
+          </head>
+
+          <body>
+            <div class="container">
+
+              <div class="hero">
+                <div class="badge">AUTOMATED INFRASTRUCTURE</div>
+
+                <h1>AWX Infrastructure Demo</h1>
+
+                <p class="subtitle">
+                  GitHub → AWX → Ansible → Rocky Linux → Nginx
+                </p>
+              </div>
+
+              <div class="pipeline">
+                <div class="step">GitHub</div>
+                <div class="arrow">→</div>
+                <div class="step">AWX</div>
+                <div class="arrow">→</div>
+                <div class="step">Ansible</div>
+                <div class="arrow">→</div>
+                <div class="step">Rocky Linux</div>
+                <div class="arrow">→</div>
+                <div class="step">Nginx</div>
+              </div>
+
+              <div class="cards">
+
+                <div class="card">
+                  <h3>Server</h3>
+                  <p>Rocky Linux 10.1</p>
+                  <p>Hostname: shakeelrocky</p>
+                </div>
+
+                <div class="card">
+                  <h3>Automation</h3>
+                  <p>Managed by Ansible</p>
+                  <p class="status">● Deployment Successful</p>
+                </div>
+
+                <div class="card">
+                  <h3>Web Server</h3>
+                  <p>Nginx</p>
+                  <p class="status">● Running</p>
+                </div>
+
+                <div class="card">
+                  <h3>Infrastructure as Code</h3>
+                  <p>Configuration stored in GitHub and deployed through AWX.</p>
+                </div>
+
+              </div>
+
+              <footer>
+                Deployed automatically by Ansible AWX
+              </footer>
+
+            </div>
+          </body>
+          </html>
+
+    - name: Configure Nginx for AWX demo
+      ansible.builtin.copy:
+        dest: /etc/nginx/conf.d/awx-demo.conf
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          server {
+              listen 80;
+              listen [::]:80;
+
+              server_name _;
+
+              root {{ web_root }};
+              index index.html;
+
+              location / {
+                  try_files $uri $uri/ =404;
+              }
+          }
+      notify: Restart nginx
+
+    - name: Remove Rocky Linux default Nginx configuration
       ansible.builtin.file:
-        path: /opt/awx-demo/config
-        state: directory
-        owner: awx-demo
-        group: awx-demo
-        mode: '0755'
+        path: /etc/nginx/conf.d/welcome.conf
+        state: absent
+      notify: Restart nginx
 
-    - name: Enable nginx
+    - name: Enable and start nginx
       ansible.builtin.systemd:
         name: nginx
         enabled: true
         state: started
 
-    - name: Deploy custom website
-      ansible.builtin.copy:
-        src: files/index.html
-        dest: /usr/share/nginx/html/index.html
-        owner: root
-        group: root
-        mode: '0644'
-
-    - name: Verify nginx
+    - name: Validate Nginx configuration
       ansible.builtin.command:
-        cmd: systemctl is-active nginx
-      register: nginx_status
+        cmd: nginx -t
       changed_when: false
+
+    - name: Verify website
+      ansible.builtin.uri:
+        url: http://127.0.0.1/
+        status_code: 200
+        return_content: true
+      register: website
 
     - name: Display deployment result
       ansible.builtin.debug:
         msg:
+          - "========================================"
+          - "AWX DEPLOYMENT SUCCESSFUL"
+          - "========================================"
           - "Server: {{ ansible_hostname }}"
           - "OS: {{ ansible_distribution }} {{ ansible_distribution_version }}"
-          - "Nginx: {{ nginx_status.stdout }}"
-          - "Configuration: /opt/awx-demo/config/app.conf"
+          - "Nginx: active"
+          - "Website: HTTP 200 OK"
+          - "Web Root: {{ web_root }}"
+          - "========================================"
 
+  handlers:
 
-    - name: Deploy application configuration
-      ansible.builtin.template:
-        src: templates/app.conf.j2
-        dest: /opt/awx-demo/config/app.conf
-        owner: awx-demo
-        group: awx-demo
-        mode: '0644'
+    - name: Restart nginx
+      ansible.builtin.systemd:
+        name: nginx
+        state: restarted
+```
