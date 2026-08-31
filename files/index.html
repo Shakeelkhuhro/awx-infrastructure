@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AWX Infrastructure Demo</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 42px;
+        }
+
+        .header p {
+            margin-top: 12px;
+            font-size: 18px;
+            color: #d1d5db;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            background: #dcfce7;
+            color: #166534;
+            font-weight: bold;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .item {
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .item strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #6b7280;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #6b7280;
+        }
+
+        @media (max-width: 700px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>AWX Infrastructure Automation</h1>
+    <p>Deployed automatically using Ansible</p>
+</div>
+
+<div class="container">
+
+    <div class="card">
+        <span class="status">● SERVER ONLINE</span>
+
+        <h2>Infrastructure Deployment Successful</h2>
+
+        <p>
+            This website was deployed to Rocky Linux automatically
+            through AWX and Ansible.
+        </p>
+    </div>
+
+    <div class="card">
+
+        <h2>Infrastructure Details</h2>
+
+        <div class="grid">
+
+            <div class="item">
+                <strong>Operating System</strong>
+                Rocky Linux 10.1
+            </div>
+
+            <div class="item">
+                <strong>Web Server</strong>
+                Nginx
+            </div>
+
+            <div class="item">
+                <strong>Automation Platform</strong>
+                AWX
+            </div>
+
+            <div class="item">
+                <strong>Configuration Tool</strong>
+                Ansible
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Deployment Pipeline</h2>
+
+        <p>
+            GitHub → AWX → Ansible → SSH → Rocky Linux → Nginx
+        </p>
+
+        <p>
+            Infrastructure is managed as code and can be
+            repeatedly deployed with a single AWX job.
+        </p>
+
+    </div>
+
+</div>
+
+<div class="footer">
+    AWX Infrastructure Automation Demo
+</div>
+
+</body>
+</html>
