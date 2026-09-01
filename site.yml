@@ -1,7 +1,6 @@
 ---
 - name: Deploy AWX Infrastructure Demo Website
   hosts: all
-  become: true
   gather_facts: true
 
   tasks:
