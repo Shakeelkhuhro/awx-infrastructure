@@ -50,7 +50,6 @@
     - name: Verify nginx configuration
       ansible.builtin.command:
         cmd: nginx -t
-      register: nginx_test
       changed_when: false
 
     - name: Verify website
@@ -58,8 +57,6 @@
         url: http://127.0.0.1
         status_code: 200
         return_content: true
-      register: website
-      changed_when: false
 
     - name: Display deployment result
       ansible.builtin.debug:
