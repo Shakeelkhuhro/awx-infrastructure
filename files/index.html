@@ -21,7 +21,7 @@
         .header {
             background: #111827;
             color: white;
-            padding: 50px 20px;
+            padding: 55px 20px;
             text-align: center;
         }
 
@@ -77,6 +77,28 @@
             color: #6b7280;
         }
 
+        .pipeline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .step {
+            padding: 14px 18px;
+            background: #111827;
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .arrow {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
         .footer {
             text-align: center;
             padding: 30px;
@@ -87,6 +109,14 @@
             .grid {
                 grid-template-columns: 1fr;
             }
+
+            .pipeline {
+                flex-direction: column;
+            }
+
+            .arrow {
+                transform: rotate(90deg);
+            }
         }
     </style>
 </head>
@@ -95,12 +125,13 @@
 
 <div class="header">
     <h1>AWX Infrastructure Automation</h1>
-    <p>Deployed automatically using Ansible</p>
+    <p>Infrastructure deployed automatically using Ansible</p>
 </div>
 
 <div class="container">
 
     <div class="card">
+
         <span class="status">● SERVER ONLINE</span>
 
         <h2>Infrastructure Deployment Successful</h2>
@@ -109,6 +140,11 @@
             This website was deployed to Rocky Linux automatically
             through AWX and Ansible.
         </p>
+
+        <p>
+            No manual Nginx configuration was required on the server.
+        </p>
+
     </div>
 
     <div class="card">
@@ -129,7 +165,7 @@
 
             <div class="item">
                 <strong>Automation Platform</strong>
-                AWX
+                Ansible AWX
             </div>
 
             <div class="item">
@@ -143,15 +179,37 @@
 
     <div class="card">
 
-        <h2>Deployment Pipeline</h2>
+        <h2>Automated Deployment Pipeline</h2>
 
-        <p>
-            GitHub → AWX → Ansible → SSH → Rocky Linux → Nginx
-        </p>
+        <div class="pipeline">
 
-        <p>
-            Infrastructure is managed as code and can be
-            repeatedly deployed with a single AWX job.
+            <div class="step">GitHub</div>
+
+            <div class="arrow">→</div>
+
+            <div class="step">AWX</div>
+
+            <div class="arrow">→</div>
+
+            <div class="step">Ansible</div>
+
+            <div class="arrow">→</div>
+
+            <div class="step">SSH</div>
+
+            <div class="arrow">→</div>
+
+            <div class="step">Rocky Linux</div>
+
+            <div class="arrow">→</div>
+
+            <div class="step">Nginx</div>
+
+        </div>
+
+        <p style="margin-top: 30px;">
+            Infrastructure is defined as code, stored in Git,
+            and deployed repeatedly through an AWX job.
         </p>
 
     </div>
