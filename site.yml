@@ -1,5 +1,5 @@
 ---
-- name: Deploy Infrastructure Demo Website
+- name: Deploy AWX Infrastructure Demo Website
   hosts: all
   become: true
   gather_facts: true
@@ -36,16 +36,11 @@
         mode: "0644"
       notify: Restart nginx
 
-    - name: Remove Rocky Linux default nginx configuration
+    - name: Remove Rocky Linux default page
       ansible.builtin.file:
         path: /etc/nginx/conf.d/welcome.conf
         state: absent
       notify: Restart nginx
-
-    - name: Test nginx configuration
-      ansible.builtin.command:
-        cmd: nginx -t
-      changed_when: false
 
     - name: Enable and start nginx
       ansible.builtin.systemd:
@@ -53,12 +48,19 @@
         enabled: true
         state: started
 
+    - name: Verify nginx configuration
+      ansible.builtin.command:
+        cmd: nginx -t
+      register: nginx_test
+      changed_when: false
+
     - name: Verify website
       ansible.builtin.uri:
         url: http://127.0.0.1
         status_code: 200
         return_content: true
       register: website
+      changed_when: false
 
     - name: Display deployment result
       ansible.builtin.debug:
