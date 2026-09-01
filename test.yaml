@@ -1,0 +1,21 @@
+---
+- name: Test AWX Rocky Linux Privileges
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+
+    - name: Check effective user
+      ansible.builtin.command:
+        cmd: whoami
+      register: effective_user
+      changed_when: false
+
+    - name: Display connection information
+      ansible.builtin.debug:
+        msg:
+          - "SSH user: {{ ansible_user_id }}"
+          - "Effective user: {{ effective_user.stdout }}"
+          - "Hostname: {{ ansible_hostname }}"
+          - "OS: {{ ansible_distribution }} {{ ansible_distribution_version }}"
