@@ -1,7 +1,13 @@
-# Managed by Ansible and AWX
+server {
+    listen 80;
+    listen [::]:80;
 
-server_name={{ ansible_hostname }}
-operating_system={{ ansible_distribution }}
-os_version={{ ansible_distribution_version }}
-managed_by=AWX
-managed_at={{ ansible_date_time.date }}
+    server_name _;
+
+    root /opt/awx-demo;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
