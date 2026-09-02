@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AWX Infrastructure Automation Demo</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 42px;
+        }
+
+        .header p {
+            margin-top: 12px;
+            font-size: 18px;
+            color: #d1d5db;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            background: #dcfce7;
+            color: #166534;
+            font-weight: bold;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .item {
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .item strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #6b7280;
+        }
+
+        .value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .pipeline {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #6b7280;
+        }
+
+        @media (max-width: 700px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>AWX Infrastructure Automation Demo</h1>
+    <p>Infrastructure deployed automatically using Ansible</p>
+</div>
+
+<div class="container">
+
+    <div class="card">
+        <span class="status">● SERVER ONLINE</span>
+
+        <h2>Infrastructure Deployment Successful</h2>
+
+        <p>
+            This website was deployed automatically to Rocky Linux
+            through AWX and Ansible.
+        </p>
+    </div>
+
+    <div class="card">
+
+        <h2>Live Infrastructure Details</h2>
+
+        <div class="grid">
+
+            <div class="item">
+                <strong>Server</strong>
+                <div class="value">
+                    {{ ansible_hostname }}
+                </div>
+            </div>
+
+            <div class="item">
+                <strong>Operating System</strong>
+                <div class="value">
+                    {{ ansible_distribution }} {{ ansible_distribution_version }}
+                </div>
+            </div>
+
+            <div class="item">
+                <strong>Web Server</strong>
+                <div class="value">
+                    Nginx
+                </div>
+            </div>
+
+            <div class="item">
+                <strong>Managed By</strong>
+                <div class="value">
+                    AWX
+                </div>
+            </div>
+
+            <div class="item">
+                <strong>Deployment Date</strong>
+                <div class="value">
+                    {{ ansible_date_time.date }}
+                </div>
+            </div>
+
+            <div class="item">
+                <strong>Deployment ID</strong>
+                <div class="value">
+                    {{ deployment_id }}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Automation Pipeline</h2>
+
+        <div class="pipeline">
+            GitHub → AWX → Ansible → SSH → Rocky Linux → Nginx
+        </div>
+
+        <p>
+            Infrastructure is managed as code. Every AWX job retrieves
+            the configuration from GitHub and applies the desired state
+            to the target server.
+        </p>
+
+    </div>
+
+</div>
+
+<div class="footer">
+    AWX Infrastructure Automation Demo . Version 1.O
+    <br>
+    Deployment ID: {{ deployment_id }}
+</div>
+
+</body>
+</html>
