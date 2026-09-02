@@ -1,6 +1,7 @@
 ---
 - name: Deploy AWX Infrastructure Demo Website
   hosts: all
+  become: true
   gather_facts: true
 
   tasks:
@@ -20,15 +21,16 @@
 
     - name: Generate deployment ID
       ansible.builtin.set_fact:
-        deployment_id: "{{ ansible_date_time.date }}-{{ ansible_date_time.time | replace(':', '') }}"
+        deployment_id: "{{ ansible_date_time.epoch }}"
 
     - name: Deploy dynamic website
       ansible.builtin.template:
-        src: index.html
+        src: templates/index.html.j2
         dest: /opt/awx-demo/index.html
         owner: root
         group: root
         mode: "0644"
+      notify: Restart nginx
 
     - name: Deploy nginx configuration
       ansible.builtin.template:
@@ -73,8 +75,10 @@
           - "Server: {{ ansible_hostname }}"
           - "OS: {{ ansible_distribution }} {{ ansible_distribution_version }}"
           - "Nginx: active"
-          - "Website: deployed successfully"
+          - "Managed By: AWX"
+          - "Deployment Date: {{ ansible_date_time.date }}"
           - "Deployment ID: {{ deployment_id }}"
+          - "Website: deployed successfully"
           - "Website path: /opt/awx-demo/index.html"
           - "Configuration: /etc/nginx/conf.d/awx-demo.conf"
           - "========================================"
