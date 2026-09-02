@@ -18,8 +18,12 @@
         group: root
         mode: "0755"
 
-    - name: Deploy website
-      ansible.builtin.copy:
+    - name: Generate deployment ID
+      ansible.builtin.set_fact:
+        deployment_id: "{{ ansible_date_time.date }}-{{ ansible_date_time.time | replace(':', '') }}"
+
+    - name: Deploy dynamic website
+      ansible.builtin.template:
         src: index.html
         dest: /opt/awx-demo/index.html
         owner: root
@@ -35,7 +39,7 @@
         mode: "0644"
       notify: Restart nginx
 
-    - name: Remove Rocky Linux default page
+    - name: Remove Rocky Linux default nginx configuration
       ansible.builtin.file:
         path: /etc/nginx/conf.d/welcome.conf
         state: absent
@@ -50,6 +54,7 @@
     - name: Verify nginx configuration
       ansible.builtin.command:
         cmd: nginx -t
+      register: nginx_test
       changed_when: false
 
     - name: Verify website
@@ -57,6 +62,7 @@
         url: http://127.0.0.1
         status_code: 200
         return_content: true
+      register: website
 
     - name: Display deployment result
       ansible.builtin.debug:
@@ -68,6 +74,7 @@
           - "OS: {{ ansible_distribution }} {{ ansible_distribution_version }}"
           - "Nginx: active"
           - "Website: deployed successfully"
+          - "Deployment ID: {{ deployment_id }}"
           - "Website path: /opt/awx-demo/index.html"
           - "Configuration: /etc/nginx/conf.d/awx-demo.conf"
           - "========================================"
